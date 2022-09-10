@@ -1,0 +1,16 @@
+{
+    "twitter": {
+        "apikey": "",
+        "apikey_secret": "",
+        "access_token": "",
+        "access_token_secret": "",
+        "bearer_token": ""
+    },
+    "telegram":{
+        "token":"",
+        "chat": {
+            "id": "",
+            "name": ""
+        }
+    }
+}
