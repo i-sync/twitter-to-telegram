@@ -1,9 +1,10 @@
 import re
+import time, random
 import urllib
 
 import tweepy
 import telegram
-from telegram import InputMediaPhoto
+from telegram import InputMediaPhoto, InputMediaVideo
 from config import configs
 from models import Twitter, Media
 
@@ -32,7 +33,7 @@ def main():
             print(f"tweet exists, id: {t.id}")
             continue
         # print(tweet.id, tweet.text)
-        tweet = client.get_tweet(id = t.id, expansions="attachments.media_keys", tweet_fields=["author_id"], media_fields=["url", "preview_image_url"])
+        tweet = client.get_tweet(id = t.id, expansions="attachments.media_keys", tweet_fields=["author_id"], media_fields=["url", "preview_image_url", "variants"])
         print(tweet)
 
         twitter = Twitter.create(tw_id = tweet.data.id, text=tweet.data.text, user_name="jamella_hoshino")
@@ -42,10 +43,12 @@ def main():
         if "media" in tweet.includes:
             for media in tweet.includes["media"]:
 
+                if media.type == "video" and hasattr(media, "variants"):
+                   media_url = next(x["url"] for x in media.variants[::-1] if "content_type" in x and x["content_type"] == "video/mp4")
                 media_model = {
                     "media_id": media.media_key,
                     "media_type": media.type,
-                    "media_url": media.url,
+                    "media_url": media_url if media_url else media.url,
                     "preview_url": media.preview_image_url if media.preview_image_url else "",
                     "twitter": twitter
                 }
@@ -62,7 +65,7 @@ def main():
         text = re.sub("https://t.co/\w{10}", "", tweet.data.text)
 
         if medias:
-            photos = [InputMediaPhoto(media=x["media_url"], caption=text) for x in medias]
+            photos = [InputMediaPhoto(media=x["media_url"], caption=text) if x["media_type"] =="photo" else InputMediaVideo(media=x["media_url"]) for x in medias]
             bot.send_media_group(chat_id=configs.telegram.chat.id, media=photos)
         else:
             bot.send_message(chat_id=configs.telegram.chat.id, text=text)
