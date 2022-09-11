@@ -43,7 +43,7 @@ def main():
         medias = []
         if "media" in tweet.includes:
             for media in tweet.includes["media"]:
-
+                media_url = None
                 if media.type == "video" and hasattr(media, "variants"):
                    media_url = next(x["url"] for x in media.variants[::-1] if "content_type" in x and x["content_type"] == "video/mp4")
                 media_model = {
