@@ -67,10 +67,11 @@ def main():
             if medias:
                 Media.insert_many(medias).execute()
 
-            text = re.sub("https://t.co/\w{10}", "", tweet.data.text)
+            # text = re.sub("https://t.co/\w{10}", "", tweet.data.text)
+            text = tweet.data.text
 
             if medias:
-                photos = [InputMediaPhoto(media=x["media_url"], caption=text) if x["media_type"] =="photo" else InputMediaVideo(media=x["media_url"]) for x in medias]
+                photos = [InputMediaPhoto(media=x["media_url"], caption=text) if x["media_type"] =="photo" else InputMediaVideo(media=x["media_url"], caption=text, caption_entities=) for x in medias]
                 bot.send_media_group(chat_id=configs.telegram.chat.id, media=photos)
             else:
                 bot.send_message(chat_id=configs.telegram.chat.id, text=text)
