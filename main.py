@@ -27,6 +27,9 @@ def main():
     for username in configs.users:
         u = client.get_user(username=username)
         tweets = client.get_users_tweets(u.data.id)
+        print(tweets)
+        if not tweets.data:
+            continue
         # print(type(tweets.data))
         for t in tweets.data:
             tmp = Twitter.get_or_none(Twitter.tw_id == t.id)
