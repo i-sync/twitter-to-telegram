@@ -26,6 +26,9 @@ def main():
 
     for username in configs.users:
         u = client.get_user(username=username)
+        print(u)
+        if not u.data:
+            continue
         tweets = client.get_users_tweets(u.data.id)
         print(tweets)
         if not tweets.data:
