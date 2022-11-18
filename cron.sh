@@ -4,4 +4,5 @@ cd /var/www/twitter-to-telegram
 
 . venv/bin/activate
 
-python3 main.py
+ts=`date +%s`
+python3 main.py > "log/log-$ts.out" 2>&1 &
